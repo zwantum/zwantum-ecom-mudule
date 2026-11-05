@@ -1,9 +1,9 @@
 # Zwantum Commerce Engine
 ## Technical Architecture & Implementation Blueprint
 
-**Status:** Final Architecture Proposal  
+**Status:** Architecture & Development Blueprint  
 **Team:** 2 Developers  
-**Purpose:** Build a reusable, modular, white-label e-commerce platform that can power multiple businesses with minimal repeated development.
+**Product:** Custom-built, modular, white-label e-commerce infrastructure
 
 > **Build once. Reuse everywhere. Configure per client. Deploy independently.**
 
@@ -11,22 +11,25 @@
 
 # 1. Executive Summary
 
-Zwantum will build a reusable e-commerce engine that allows the engineering team to develop core functionality once and reuse it across multiple client projects.
+Zwantum Commerce Engine is a custom-built, modular, white-label e-commerce platform designed to power multiple independent businesses through a shared, centrally maintained codebase.
 
-Each client will have:
+The goal is to eliminate repetitive development across client projects while maintaining flexibility, security, performance, and independent deployment capabilities.
 
-- A separate GitHub repository
-- A separate frontend deployment
-- A separate backend deployment
-- A separate PostgreSQL database
-- Separate environment variables and credentials
-- A client-specific storefront theme
-- Client-specific installed and enabled modules
-- Independent deployment and release cycles
+The platform will be developed from scratch using modern web technologies. Existing commerce platforms such as Medusa and Vendure may be used as architectural references, but they will not be used as the foundation or runtime dependencies of the engine.
 
-However, the underlying functionality will be developed and maintained centrally by the Zwantum engineering team.
+## Core objectives
 
-The platform will support multiple business categories, including:
+- Build a reusable commerce infrastructure.
+- Support multiple businesses and industries.
+- Maintain one central codebase.
+- Develop reusable themes, modules, and integrations.
+- Provide a configurable Admin Panel.
+- Support independently deployed client stores.
+- Keep client data, credentials, and infrastructure isolated.
+- Enable controlled upgrades without maintaining separate code forks.
+- Build a scalable architecture without premature microservices.
+
+## Supported business categories
 
 - Fashion and clothing
 - Food and grocery
@@ -35,181 +38,181 @@ The platform will support multiple business categories, including:
 - Electronics
 - General retail
 
-The architecture will prioritize performance, security, maintainability, and simplicity for a two-developer team.
+---
+
+# 2. Architecture Decisions
+
+| Area | Decision |
+|---|---|
+| Repository | Monorepo |
+| Backend architecture | Modular Monolith |
+| Backend framework | NestJS |
+| Backend runtime | Persistent Node.js |
+| Frontend | Next.js |
+| Database | PostgreSQL |
+| ORM | Prisma |
+| Package manager | pnpm |
+| Monorepo tooling | Turborepo |
+| Shared development | Workspace packages |
+| Module distribution | Private npm packages when appropriate |
+| Client architecture | Independent deployments |
+| Client data | Separate PostgreSQL database per client |
+| Infrastructure | Persistent hosting + managed services |
+| Initial deployment | Manual and reviewed |
+| Future provisioning | Gradually automated |
+
+## Understanding the architecture
+
+**Monorepo:** All applications and reusable packages are maintained in one Git repository.
+
+**Modular Monolith:** The backend is one deployable NestJS application organized into independent, well-defined modules.
+
+**Independent Deployments:** Each client receives its own deployment of the required applications, backend, configuration, and database while the source code remains centrally maintained.
+
+These three concepts work together; they are not competing architectures.
 
 ---
 
-# 2. Final Technology Stack
+# 3. Technology Stack
 
 | Layer | Technology | Purpose |
 |---|---|---|
-| Language | TypeScript | Common language across applications |
-| Storefront | Next.js | Customer-facing e-commerce website |
+| Language | TypeScript | Shared language across applications |
+| Storefront | Next.js | Customer-facing website |
 | Admin Panel | Next.js | Store management dashboard |
-| Backend | NestJS | Modular commerce API |
+| Backend | NestJS | Commerce API |
 | Runtime | Node.js | Persistent backend runtime |
-| UI | React | Component-based interfaces |
+| UI | React | Component-based interface |
 | Styling | Tailwind CSS | Styling and design system |
 | UI Components | shadcn/ui | Accessible reusable components |
-| Database | PostgreSQL | Relational commerce data |
-| ORM | Prisma | Database access and migrations |
+| Database | PostgreSQL | Relational data storage |
+| ORM | Prisma | Data access and migrations |
 | Validation | Zod | Runtime validation and shared schemas |
 | Package Manager | pnpm | Dependency and workspace management |
-| Monorepo Tool | Turborepo | Build orchestration and caching |
-| State Management | Zustand | Lightweight client-side state |
-| Data Fetching | TanStack Query | Client-side API data management |
-| Testing | Vitest | Unit and integration testing |
-| E2E Testing | Playwright | Browser-based application testing |
-| Package Registry | GitHub Packages | Private reusable packages |
-| API Hosting | Persistent Node.js hosting | Long-running backend service |
-| Frontend Hosting | Vercel or suitable alternative | Next.js deployment |
-| Media Storage | S3-compatible object storage | Product images and media |
-| CDN | Cloudflare or hosting provider CDN | Asset delivery and caching |
-
-## Why this stack?
-
-It provides:
-
-- A consistent TypeScript development experience.
-- Strong frontend and backend separation.
-- Reusable packages across client projects.
-- A structured backend architecture.
-- SEO-friendly storefront rendering.
-- A practical foundation for scaling.
-- Manageability for a two-person engineering team.
+| Monorepo | Turborepo | Build orchestration and caching |
+| State Management | Zustand | Client-side state |
+| Data Fetching | TanStack Query | API data management |
+| Unit Testing | Vitest | Unit and integration tests |
+| E2E Testing | Playwright | Browser-based testing |
+| Package Registry | GitHub Packages | Private package distribution |
+| API Hosting | Railway / VPS / Cloud VM | Persistent NestJS deployment |
+| Frontend Hosting | Vercel or equivalent | Next.js deployment |
+| Media Storage | S3-compatible storage / Cloudinary | Product media |
+| CDN | Cloudflare or hosting provider | Asset delivery |
 
 ---
 
-# 3. High-Level System Architecture
+# 4. High-Level System Architecture
 
 ```mermaid
 flowchart TB
-
-    subgraph CORE["Zwantum Commerce Monorepo"]
-
+    subgraph MONOREPO["Zwantum Commerce Monorepo"]
         SF["Next.js Storefront"]
-
-        ADMIN["Next.js Admin Panel"]
-
+        ADMIN["Next.js Admin"]
         API["NestJS API"]
 
-        UI["Shared UI Package"]
+        subgraph PACKAGES["Reusable Workspace Packages"]
+            CORE["Commerce Core"]
+            SDK["Module SDK"]
+            SHARED["Shared Types & Schemas"]
+            UI["Shared UI"]
+            MODULES["Optional Modules"]
+            PROVIDERS["Payment & Shipping Providers"]
+            THEMES["Storefront Themes"]
+        end
 
-        TYPES["Shared Types & Schemas"]
-
-        COMMERCE["Commerce Core"]
-
-        DBPKG["Database Package"]
-
-        THEMES["Theme Packages"]
-
-        MODULES["Reusable Modules"]
-
+        SF --> SHARED
+        SF --> THEMES
         SF --> UI
+
+        ADMIN --> SHARED
         ADMIN --> UI
 
-        SF --> TYPES
-        ADMIN --> TYPES
-        API --> TYPES
-
-        API --> COMMERCE
-        API --> DBPKG
+        API --> CORE
+        API --> SDK
         API --> MODULES
-
-        SF --> THEMES
-
+        API --> PROVIDERS
+        API --> SHARED
     end
 
-    CORE --> REGISTRY["Private Package Registry"]
-
-    REGISTRY --> CLIENT1["Client A Repository"]
-    REGISTRY --> CLIENT2["Client B Repository"]
-    REGISTRY --> CLIENT3["Client C Repository"]
-
-    CLIENT1 --> DEPLOY1["Client A Deployment"]
-    CLIENT2 --> DEPLOY2["Client B Deployment"]
-    CLIENT3 --> DEPLOY3["Client C Deployment"]
-
-    DEPLOY1 --> DB1[("Client A Database")]
-    DEPLOY2 --> DB2[("Client B Database")]
-    DEPLOY3 --> DB3[("Client C Database")]
+    API --> DB[("Client PostgreSQL Database")]
 ```
 
-**Important:** The monorepo is the central development environment. Client applications are deployed independently.
+## Important distinction
+
+`apps/api` is the actual backend application and server.
+
+`packages/commerce-core`, `packages/module-sdk`, and other packages are reusable code that the API integrates.
+
+**Packages are not independently hosted backend servers.**
 
 ---
 
-# 4. Monorepo Structure
+# 5. Monorepo Structure
 
-The central repository will contain the applications, reusable packages, themes, and modules.
+The following is the proposed central development repository.
 
 ```text
 zwantum-commerce/
 │
 ├── apps/
+│   ├── api/                         # Main NestJS backend
+│   │   └── src/
+│   │       ├── modules/              # Core backend modules
+│   │       ├── common/
+│   │       ├── config/
+│   │       ├── integrations/
+│   │       ├── jobs/
+│   │       ├── app.module.ts
+│   │       └── main.ts
 │   │
-│   ├── storefront/
+│   ├── admin/                       # Next.js Admin Panel
 │   │   ├── app/
 │   │   ├── components/
 │   │   ├── hooks/
 │   │   ├── services/
-│   │   ├── lib/
-│   │   ├── styles/
-│   │   └── public/
+│   │   └── lib/
 │   │
-│   ├── admin/
-│   │   ├── app/
-│   │   ├── components/
-│   │   ├── hooks/
-│   │   ├── services/
-│   │   ├── lib/
-│   │   └── styles/
-│   │
-│   └── api/
-│       └── src/
-│           ├── modules/
-│           ├── common/
-│           ├── config/
-│           ├── database/
-│           ├── integrations/
-│           ├── jobs/
-│           └── main.ts
+│   └── storefront/                   # Next.js Storefront
+│       ├── app/
+│       ├── components/
+│       ├── hooks/
+│       ├── services/
+│       ├── lib/
+│       └── public/
 │
 ├── packages/
+│   ├── commerce-core/                 # Core business logic
+│   ├── module-sdk/                    # Module development SDK
+│   ├── shared-types/                  # Shared TypeScript types
+│   ├── validation/                    # Shared validation schemas
+│   ├── database/                       # Shared database utilities
+│   ├── auth/                           # Shared auth utilities
+│   ├── ui/                             # Shared UI components
+│   ├── storefront-core/                 # Storefront abstractions
 │   │
-│   ├── ui/
+│   ├── theme-contract/                  # Theme interface
+│   ├── themes/
+│   │   ├── minimal/
+│   │   ├── luxury/
+│   │   └── fashion/
 │   │
-│   ├── shared-types/
+│   ├── payment-contract/                # Payment provider interface
+│   ├── payments/
+│   │   ├── razorpay/
+│   │   └── cashfree/
 │   │
-│   ├── validation/
+│   ├── shipping-contract/               # Shipping provider interface
+│   ├── shipping/
+│   │   ├── shiprocket/
+│   │   └── manual/
 │   │
-│   ├── database/
-│   │
-│   ├── auth/
-│   │
-│   ├── commerce-core/
-│   │
-│   ├── storefront-core/
-│   │
-│   ├── theme-contract/
-│   │
-│   ├── theme-minimal/
-│   │
-│   ├── theme-luxury/
-│   │
-│   ├── theme-fashion/
-│   │
-│   ├── payment-contract/
-│   │
-│   ├── payment-razorpay/
-│   │
-│   ├── shipping-contract/
-│   │
-│   ├── shipping-shiprocket/
-│   │
-│   ├── shipping-manual/
-│   │
-│   └── chatbot/
+│   └── modules/                         # Reusable optional modules
+│       ├── wishlist/
+│       ├── reviews/
+│       ├── loyalty/
+│       ├── chatbot/
+│       └── analytics/
 │
 ├── tooling/
 │
@@ -227,37 +230,43 @@ zwantum-commerce/
 └── README.md
 ```
 
-## Important package strategy
+## Workspace configuration
 
-Do not create an NPM package for every small feature or component.
+`pnpm-workspace.yaml`:
 
-Start with a few well-defined packages. Extract a feature into its own package when:
+```yaml
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "packages/themes/*"
+  - "packages/payments/*"
+  - "packages/shipping/*"
+  - "packages/modules/*"
+```
 
-- It is genuinely reusable.
-- It has a stable interface.
-- It can be tested independently.
-- It can be versioned independently.
-- Its separation improves maintainability.
+## Package development principle
 
-Avoid premature abstraction.
+Not every feature needs to become a published npm package.
+
+Initially, develop and integrate packages directly through the pnpm workspace. Publish only packages that are genuinely reusable, stable, independently testable, and suitable for versioned distribution.
 
 ---
 
-# 5. Application Architecture
+# 6. Application Architecture
 
-## 5.1 Storefront — Next.js
+## 6.1 Storefront — Next.js
 
-The storefront is responsible for the customer experience.
+The storefront provides the complete customer-facing shopping experience.
 
-Features:
+### Core features
 
 - Homepage
-- Product listings
+- Product listing
 - Product details
 - Categories and collections
-- Search and filters
+- Search and filtering
 - Product variants
-- Cart
+- Shopping cart
 - Checkout
 - Customer authentication
 - Customer profile
@@ -268,79 +277,76 @@ Features:
 
 ### Rendering strategy
 
-| Page | Rendering approach |
+| Page | Approach |
 |---|---|
 | Homepage | Static or revalidated rendering |
 | Product listing | Static/revalidated where appropriate |
 | Product details | Static generation or revalidation |
 | Cart | Client-side interactions |
 | Checkout | Server-validated operations |
-| Customer account | Authenticated, private rendering |
+| Customer account | Authenticated rendering |
 | Order tracking | Authenticated API requests |
 
-**Goal:** Fast page loading without unnecessary server-side computation on every request.
+## 6.2 Admin Panel — Next.js
 
-## 5.2 Admin Panel — Next.js
+The Admin Panel provides a reusable management interface for all client stores.
 
-The admin panel is responsible for managing the store.
+### Core features
 
-Features:
-
+- Dashboard
 - Product management
 - Category management
-- Inventory
-- Orders
-- Customers
-- Discounts
+- Inventory management
+- Order management
+- Customer management
+- Discounts and coupons
 - Shipping settings
 - Payment settings
 - Store branding
 - Theme customization
 - Module configuration
 - Analytics
-- Staff permissions
+- Staff accounts and permissions
 
-The admin panel communicates with the NestJS backend.
+The Admin Panel should use a shared component system and configurable navigation, but access to features must always be enforced by the backend.
 
-## 5.3 Backend — NestJS
+## 6.3 Backend — NestJS
 
-The backend handles all business logic.
+The backend is the main commerce API and business logic layer.
 
-Responsibilities:
+### Responsibilities
 
-- Authentication
-- Authorization
-- Products
-- Categories
+- Authentication and authorization
+- Products and categories
+- Product variants
 - Inventory
 - Pricing
-- Cart
-- Checkout
+- Cart and checkout
 - Orders
 - Payments
 - Shipping
 - Customers
 - Discounts
-- Themes
-- Module registry
+- Store configuration
+- Module registration
 - Notifications
 - Audit logs
+- Background processing
 
-The backend will initially be a **modular monolith**.
+The backend will initially remain a **Modular Monolith**.
 
-This means all backend modules run inside one NestJS application while maintaining clear boundaries.
+All core modules run within one NestJS application and communicate through defined interfaces and module boundaries.
 
-We will not start with microservices.
+Microservices will only be considered when actual operational or scaling requirements justify them.
 
 ---
 
-# 6. Backend Folder Structure
+# 7. Backend Module Structure
 
 ```text
 apps/api/src/
 │
 ├── main.ts
-│
 ├── app.module.ts
 │
 ├── config/
@@ -356,13 +362,9 @@ apps/api/src/
 │   └── utilities/
 │
 ├── modules/
-│   │
 │   ├── auth/
-│   │
 │   ├── users/
-│   │
 │   ├── staff/
-│   │
 │   ├── stores/
 │   │
 │   ├── catalog/
@@ -371,64 +373,43 @@ apps/api/src/
 │   │   └── variants/
 │   │
 │   ├── inventory/
-│   │
 │   ├── pricing/
-│   │
 │   ├── cart/
-│   │
 │   ├── checkout/
-│   │
 │   ├── orders/
-│   │
-│   ├── payments/
-│   │   ├── payment.module.ts
-│   │   ├── payment.service.ts
-│   │   └── providers/
-│   │
-│   ├── shipping/
-│   │   ├── shipping.module.ts
-│   │   ├── shipping.service.ts
-│   │   └── providers/
-│   │
-│   ├── discounts/
-│   │
 │   ├── customers/
-│   │
+│   ├── discounts/
+│   ├── payments/
+│   ├── shipping/
 │   ├── themes/
-│   │
-│   ├── modules-registry/
-│   │
+│   ├── module-registry/
 │   ├── media/
-│   │
 │   ├── notifications/
-│   │
 │   ├── analytics/
-│   │
 │   └── audit/
 │
 └── health/
 ```
 
-### Backend rules
+## Backend development rules
 
-- Controllers should remain thin.
-- Business logic belongs in services/domain logic.
-- Each module should have a clear responsibility.
+- Keep controllers thin.
+- Put business logic inside services and domain logic.
+- Define clear module boundaries.
 - Avoid circular dependencies.
 - Use transactions for critical operations.
-- Validate every external input.
-- Enforce authorization on every protected endpoint.
-- Do not expose provider credentials to the frontend.
+- Validate all external input.
+- Enforce permissions on every protected endpoint.
+- Never expose provider credentials to the frontend.
+- Keep module dependencies explicit.
 
 ---
 
-# 7. Database Architecture
+# 8. Database Architecture
 
 ## PostgreSQL + Prisma
 
 Every client will have a separate PostgreSQL database.
-
-Example:
 
 ```text
 Client A → PostgreSQL Database A
@@ -438,12 +419,12 @@ Client C → PostgreSQL Database C
 
 ## Why separate databases?
 
-- Better data isolation.
-- Easier client-specific backups.
-- Independent migrations.
-- Independent maintenance.
-- Easier client offboarding.
-- Reduced risk of cross-client data leakage.
+- Stronger client data isolation
+- Independent backups and restoration
+- Independent database migrations
+- Easier client offboarding
+- Reduced risk of cross-client data leakage
+- Client-specific maintenance and recovery
 
 ## Core entities
 
@@ -491,21 +472,21 @@ AuditLog
 
 - Use relational constraints.
 - Use transactions for checkout and order processing.
-- Store money as integer minor units (e.g., paise) with a currency code.
-- Never use floating-point values for financial calculations.
-- Use indexes based on real query patterns.
+- Store money as integer minor units, such as paise, with a currency code.
+- Never use floating-point numbers for financial calculations.
+- Index based on actual query patterns.
 - Store timestamps in UTC.
 - Use Prisma migrations.
-- Never modify the production database schema manually.
-- Never seed production with dummy customer data.
+- Never modify production schemas manually.
+- Never seed production with dummy customer or order data.
 
 ---
 
-# 8. Theme Architecture
+# 9. Theme Architecture
 
-Themes are complete storefront designs, not merely different color palettes.
+Themes are complete storefront design systems, not merely color palettes.
 
-Each theme has its own:
+Each theme defines:
 
 - Homepage composition
 - Header and navigation
@@ -515,8 +496,8 @@ Each theme has its own:
 - Typography
 - Footer
 - Section layouts
-- Responsive design
-- Theme-specific customization options
+- Responsive behavior
+- Supported customization options
 
 ## Example theme catalog
 
@@ -530,31 +511,30 @@ Each theme has its own:
 
 ## Theme lifecycle
 
-1. Zwantum developers build themes centrally.
-2. Themes are added to the theme gallery.
-3. The client previews available themes.
-4. The client approves a theme.
-5. The developer installs the selected theme package.
+1. Developers build themes centrally in the monorepo.
+2. Themes are tested against the shared theme contract.
+3. A theme is added to the available theme catalog.
+4. The client selects or approves a theme.
+5. The selected theme is integrated into the client's storefront.
 6. Branding and settings are configured.
-7. The application is tested and deployed.
+7. The storefront is tested and deployed.
 
 ## Admin customization
 
-The client admin can edit:
+The client admin can customize supported settings:
 
 - Store name
-- Logo
+- Logo and favicon
 - Brand colors
-- Font family from approved options
-- Navbar color
-- Navbar style
+- Approved font options
+- Navbar color and style
 - Button appearance
 - Footer content
 - Hero banners
-- Product card preferences
+- Product card variants
 - Supported homepage sections
 
-## Theme configuration example
+## Theme configuration
 
 ```ts
 export interface StoreThemeConfig {
@@ -572,8 +552,6 @@ export interface StoreThemeConfig {
     accent: string;
     background: string;
     text: string;
-    navbarBackground: string;
-    navbarText: string;
   };
 
   typography: {
@@ -589,42 +567,70 @@ export interface StoreThemeConfig {
 }
 ```
 
-This configuration should be validated before saving.
+Theme configurations must be validated before saving.
 
-**Important:** Normal theme customization should not require a new code deployment whenever possible.
+**Important:** Normal branding and theme configuration should not require a new code deployment whenever possible.
 
 ---
 
-# 9. Module Architecture
+# 10. Module Architecture
 
-Modules are reusable features that can be installed into any client application.
+Modules are reusable capabilities that extend the core commerce engine.
 
-## Example modules
+## Module categories
 
-| Category | Modules |
+| Category | Examples |
 |---|---|
-| Payments | Razorpay, Cashfree, Stripe |
-| Shipping | Shiprocket, manual shipping, other providers |
+| Marketing | Wishlist, loyalty, referrals |
+| Customer experience | Reviews, ratings |
 | AI | Chatbot, voice AI |
-| Marketing | Coupons, referrals, loyalty |
 | Analytics | Store analytics |
 | Recommendations | Product recommendations |
 | Support | FAQ, support tickets |
-| Search | Advanced search and filtering |
+| Payments | Razorpay, Cashfree |
+| Shipping | Shiprocket, manual shipping |
 
-## Module lifecycle
+## Three types of modules
 
-Every module should have these states:
+### A. Core modules
 
-| State | Meaning |
-|---|---|
-| Authorized | Zwantum allows the client to use it |
-| Installed | Module package exists in the client's codebase |
-| Configured | Required settings are available |
-| Enabled | Client admin has activated it |
-| Healthy | Module is functioning correctly |
+Essential commerce capabilities maintained within the main backend.
 
-These states must not be treated as interchangeable.
+Examples: Products, Orders, Inventory, Cart, Checkout.
+
+These are not independently deployed services.
+
+### B. Optional feature modules
+
+Reusable features that can be integrated into the API and Admin Panel.
+
+Examples: Wishlist, Reviews, Loyalty, Chatbot.
+
+### C. Provider modules
+
+Adapters that integrate external services through standardized contracts.
+
+Examples: Razorpay, Cashfree, Shiprocket.
+
+---
+
+# 11. Module SDK
+
+The Module SDK will provide a standard interface for developing optional modules.
+
+It should define the supported module lifecycle and integration points, including:
+
+- Backend module registration
+- Module metadata and manifest
+- Admin navigation registration
+- Admin routes and UI integration
+- Permissions
+- Settings schema
+- Database migrations
+- Lifecycle hooks
+- Dependency declarations
+- Compatibility requirements
+- Module health checks
 
 ## Example module manifest
 
@@ -640,88 +646,334 @@ export interface CommerceModuleManifest {
   capabilities: string[];
 
   configSchemaVersion: number;
+
+  compatibility: {
+    commerceEngine: string;
+    moduleSdk: string;
+  };
 }
 ```
 
-## Module installation workflow
+## NestJS integration
 
-When a new client requires a chatbot:
+NestJS Dynamic Modules can be used as the backend registration mechanism.
 
-1. Developer installs the chatbot package.
-2. Developer configures the module for the client.
-3. Developer configures its permissions and required credentials.
-4. Developer tests the integration.
-5. Developer pushes the code to the client's repository.
-6. Developer deploys the application.
-7. Admin can enable or disable the chatbot if authorized.
+The SDK should wrap and standardize this functionality rather than reinventing the NestJS module system.
 
-When another client requires the same chatbot, the developer installs the same package and configures a different brand context.
+Example:
 
-**No chatbot rewriting is required.**
+```ts
+@Module({})
+export class WishlistModule {
+  static register(options: WishlistOptions): DynamicModule {
+    return {
+      module: WishlistModule,
+      providers: [
+        {
+          provide: WISHLIST_OPTIONS,
+          useValue: options,
+        },
+      ],
+      exports: [WishlistService],
+    };
+  }
+}
+```
+
+The actual SDK API will be finalized after implementing and testing the first optional module.
 
 ---
 
-# 10. Module Permissions and Super Admin
+# 12. Module Development Workflow
 
-Zwantum should maintain internal control over which client can use which modules.
+**All modules will initially be developed inside the central monorepo.**
+
+We will not need to publish a package every time we make a change during development.
+
+## Phase 1 — Develop the module
+
+Create the module inside:
+
+```text
+packages/modules/wishlist/
+```
+
+Example structure:
+
+```text
+wishlist/
+│
+├── src/
+│   ├── backend/
+│   │   ├── wishlist.module.ts
+│   │   ├── wishlist.service.ts
+│   │   ├── wishlist.controller.ts
+│   │   └── wishlist.repository.ts
+│   │
+│   ├── admin/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   └── routes.ts
+│   │
+│   ├── migrations/
+│   ├── permissions/
+│   ├── module.config.ts
+│   └── index.ts
+│
+├── tests/
+├ ── unit/
+├ ── integration/
+│
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+The exact structure can evolve with the Module SDK.
+
+## Phase 2 — Integrate through the workspace
+
+During development, the API can consume the module using:
+
+```json
+{
+  "dependencies": {
+    "@zwantum/module-wishlist": "workspace:*"
+  }
+}
+```
+
+The module is available directly from the monorepo.
+
+No private registry publishing is required.
+
+## Phase 3 — Develop and test locally
+
+Run the applications and module through the workspace:
+
+```bash
+pnpm install
+
+pnpm dev
+```
+
+Test:
+
+- Backend endpoints
+- Business logic
+- Database interactions
+- Module settings
+- Permissions
+- Admin UI
+- Error handling
+- Integration with existing commerce functionality
+
+## Phase 4 — Build and verify
+
+Before preparing a release:
+
+```bash
+pnpm --filter @zwantum/module-wishlist build
+
+pnpm --filter @zwantum/module-wishlist test
+```
+
+Also verify:
+
+- TypeScript compilation
+- Linting
+- Integration tests
+- Compatibility with the Module SDK
+- Compatibility with the supported commerce engine version
+- Database migration behavior
+- Security review
+
+## Phase 5 — Package locally
+
+Create a package archive:
+
+```bash
+pnpm --filter @zwantum/module-wishlist pack
+```
+
+This produces a `.tgz` archive.
+
+Install that archive into a separate test application to verify that the module works outside the monorepo workspace.
+
+```bash
+pnpm add ./zwantum-module-wishlist-1.0.0.tgz
+```
+
+This step is important because workspace development can hide missing dependencies or incorrect package exports.
+
+## Phase 6 — Publish the package
+
+After successful verification, publish the package to the private GitHub Packages registry.
+
+```bash
+pnpm publish
+```
+
+The package should have:
+
+- A unique package name
+- A valid version
+- Correct build output
+- Correct exports
+- Required dependencies
+- README documentation
+- Changelog
+- Compatibility declaration
+
+## Phase 7 — Install in a client application
+
+For a client that requires Wishlist:
+
+```bash
+pnpm add @zwantum/module-wishlist@1.0.0
+```
+
+Then:
+
+1. Register the module in the backend.
+2. Integrate its Admin Panel navigation and UI.
+3. Apply its database migrations.
+4. Configure permissions.
+5. Configure the module.
+6. Test the module in the client environment.
+7. Deploy the client application.
+
+**The package is integrated into the application build. It is not a separate server that needs hosting.**
+
+---
+
+# 13. Private Package Registry
+
+GitHub Packages will be the initial private registry.
+
+## Example package names
+
+```text
+@zwantum/commerce-core
+
+@zwantum/module-sdk
+
+@zwantum/module-wishlist
+@zwantum/module-reviews
+@zwantum/module-loyalty
+@zwantum/module-chatbot
+
+@zwantum/payment-razorpay
+@zwantum/payment-cashfree
+
+@zwantum/shipping-shiprocket
+@zwantum/shipping-manual
+
+@zwantum/theme-minimal
+@zwantum/theme-luxury
+```
+
+## Publishing rules
+
+- Use semantic versioning.
+- Publish only verified packages.
+- Maintain changelogs.
+- Pin package versions in deployments.
+- Never automatically update every client to the latest version.
+- Test upgrades in staging before production.
+- Avoid breaking changes without a major version increment.
+
+## Semantic versioning
+
+```text
+1.0.0  Initial stable release
+
+1.0.1  Bug fix
+
+1.1.0  Backward-compatible feature
+
+2.0.0  Breaking change
+```
+
+---
+
+# 14. Module Installation and Lifecycle
+
+A module's state should be tracked explicitly.
+
+| State | Meaning |
+|---|---|
+| Authorized | Zwantum permits the client to use the module |
+| Available | Compatible package version is available |
+| Installed | Package is integrated into the application |
+| Configured | Required settings and credentials are provided |
+| Enabled | Client admin has activated the module |
+| Healthy | Module is operating correctly |
+
+These states are not interchangeable.
+
+## Installation flow
+
+```text
+Module Available
+      ↓
+Zwantu​m Authorizes Client
+      ↓
+Developer Installs Package
+      ↓
+Backend Registration
+      ↓
+Database Migrations
+      ↓
+Permissions & Configuration
+      ↓
+Integration Testing
+      ↓
+Deployment
+      ↓
+Client Admin Enables Module
+      ↓
+Module Active
+```
 
 ## Super Admin responsibilities
 
 - Authorize modules for clients.
-- View installed module versions.
-- Manage client module entitlements.
-- Revoke access when necessary.
+- Manage module entitlements.
+- View installed versions.
 - Manage subscription-based capabilities.
-- View module health information.
-- Manage platform-level configurations.
+- Revoke access when necessary.
+- View module health.
 
 ## Client Admin responsibilities
 
 - Enable or disable authorized modules.
 - Configure module settings.
 - Configure supported integrations.
-- Select an installed shipping provider.
-- Manage theme settings.
-- Manage store branding.
+- Manage module-related permissions.
+- Select installed and configured providers.
 
-## Developer responsibilities
-
-- Build modules.
-- Publish reusable packages.
-- Install modules in client repositories.
-- Configure integrations.
-- Review security.
-- Test and deploy.
-
-## Important rule
-
-The client admin cannot install a module that is not:
-
-1. Authorized by Zwantum.
-2. Installed in that client's application.
-3. Properly configured.
+**Security rule:** Hiding a module from the Admin Panel is not sufficient. Every protected feature and API endpoint must enforce authorization on the backend.
 
 ---
 
-# 11. Payment Module Architecture
+# 15. Payment Module Architecture
 
 Payment providers should be independent of the core checkout logic.
 
-## Example package structure
+## Package structure
 
 ```text
 packages/
-│
 ├── payment-contract/
 │
-├── payment-razorpay/
-│
-├── payment-cashfree/
-│
-└── payment-stripe/
+└── payments/
+    ├── razorpay/
+    ├── cashfree/
+    └── stripe/
 ```
 
-## Payment interface
+## Provider interface
 
 ```ts
 export interface PaymentProvider {
@@ -739,49 +991,44 @@ export interface PaymentProvider {
 }
 ```
 
-## Example
+## Provider lifecycle
 
-The client initially uses Razorpay.
-
-Later, the developer installs Cashfree.
-
-The client admin can choose Cashfree from the payment settings if:
-
-- Cashfree is installed.
-- Cashfree is authorized.
-- Credentials are configured.
-- Required checks pass.
-
-The core checkout system remains unchanged.
+1. Develop the provider adapter.
+2. Implement the shared payment contract.
+3. Add webhook verification.
+4. Implement idempotency.
+5. Add unit and integration tests.
+6. Test payment and refund flows.
+7. Package and publish when stable.
+8. Install and configure for the required client.
+9. Deploy and verify.
 
 ## Security requirements
 
-- Verify payment webhooks on the server.
+- Verify all payment webhooks on the server.
 - Never trust frontend payment success.
 - Implement idempotency.
-- Store payment state separately from order state.
+- Maintain separate payment and order states.
 - Keep credentials server-side.
-- Never store raw card information unless explicitly required and appropriately compliant.
+- Never store raw card information unnecessarily.
 
 ---
 
-# 12. Shipping Module Architecture
+# 16. Shipping Module Architecture
 
-## Example packages
+## Package structure
 
 ```text
 packages/
-│
 ├── shipping-contract/
 │
-├── shipping-shiprocket/
-│
-├── shipping-manual/
-│
-└── shipping-other-provider/
+└── shipping/
+    ├── shiprocket/
+    ├── manual/
+    └── other-provider/
 ```
 
-## Shipping interface
+## Provider interface
 
 ```ts
 export interface ShippingProvider {
@@ -799,37 +1046,30 @@ export interface ShippingProvider {
 }
 ```
 
-## Example scenario
+## Provider lifecycle
 
-A client initially uses Shiprocket.
+1. Implement the shared shipping contract.
+2. Develop the provider adapter.
+3. Implement serviceability, shipment creation, and tracking.
+4. Handle webhooks and status normalization.
+5. Add tests.
+6. Package and publish.
+7. Install in the client application.
+8. Configure credentials.
+9. Test and deploy.
 
-Later, the client wants manual shipping.
-
-The developer installs the manual shipping module and deploys it.
-
-The admin can then select:
-
-```text
-Shipping Provider:
-
-( ) Shiprocket
-( ) Manual Shipping
-```
-
-The admin does not need to write code.
-
-If both modules are already installed and configured, switching between them can be a configuration change.
+If multiple providers are installed and configured, the client admin can select the appropriate provider without rewriting the core shipping logic.
 
 ---
 
-# 13. Chatbot Module Architecture
+# 17. Chatbot Module Architecture
 
 The chatbot should be developed once and reused across different clients.
 
 ## Package
 
 ```text
-@zwantum/chatbot
+@zwantum/module-chatbot
 ```
 
 ## Reusable capabilities
@@ -842,376 +1082,229 @@ The chatbot should be developed once and reused across different clients.
 - Support-ticket creation
 - Optional voice interaction
 
-## Client-specific context
+## Client-specific configuration
 
 Each client has its own:
 
 - Brand name
+- Assistant name
 - Brand tone
-- Assistant identity
 - FAQs
 - Store policies
 - Product catalog
 - Knowledge base
-- Shipping and return policies
-- Enabled chatbot capabilities
-
-## Example
-
-```ts
-export interface ChatbotConfig {
-  enabled: boolean;
-
-  assistantName: string;
-
-  brandTone: string;
-
-  capabilities: {
-    productSearch: boolean;
-    recommendations: boolean;
-    orderTracking: boolean;
-    faq: boolean;
-    supportTickets: boolean;
-  };
-
-  knowledgeBaseId?: string;
-}
-```
+- Enabled capabilities
 
 ## Client isolation
 
 - Separate knowledge bases per client.
-- Separate conversation history.
+- Separate conversation histories.
 - Separate vector-store namespaces or databases.
 - No cross-client retrieval.
 - No cross-client order access.
-- Validate customer identity before providing order information.
-- Never expose API keys to the browser.
+- Validate customer identity before returning order information.
+- Never expose AI provider API keys to the browser.
 
 ---
 
-# 14. Private NPM Package Strategy
+# 18. Client Architecture
 
-Reusable modules and themes should be distributed through private packages.
+Every client receives a separately configured and deployed instance of the required applications.
 
-## Example package names
+**The source code remains centrally maintained in the Zwantum Commerce monorepo.**
 
-```text
-@zwantum/commerce-core
+We are not initially creating a separate code fork or GitHub repository for every client.
 
-@zwantum/theme-minimal
-
-@zwantum/theme-luxury
-
-@zwantum/payment-razorpay
-
-@zwantum/payment-cashfree
-
-@zwantum/shipping-shiprocket
-
-@zwantum/shipping-manual
-
-@zwantum/chatbot
-```
-
-## Publishing workflow
-
-1. Developer implements the module in the central monorepo.
-2. Unit and integration tests are added.
-3. Code review and security checks are performed.
-4. Package is versioned.
-5. Package is published to GitHub Packages.
-6. Developer installs it in the required client repository.
-7. Client repository pins the package version.
-8. Client is tested and deployed.
-
-## Versioning
-
-Use semantic versioning:
+## Client-specific configuration
 
 ```text
-1.0.0  Initial stable release
-
-1.0.1  Bug fix
-
-1.1.0  Backward-compatible feature
-
-2.0.0  Breaking change
+Client Configuration
+│
+├── Store Configuration
+├── Theme Configuration
+├── Module Configuration
+├── Business Configuration
+└── Environment Variables
 ```
 
-Never automatically update every client to the latest version.
+## Example client configuration
 
-Each client should upgrade deliberately after testing.
+```ts
+export interface ClientConfig {
+  store: {
+    name: string;
+    domain: string;
+    currency: string;
+    locale: string;
+  };
 
----
+  theme: {
+    themeId: string;
+  config: StoreThemeConfig;
+  version: string;
+  };
 
-# 15. Client Repository Structure
-
-Every client repository should contain its application and client-specific configuration.
-
-```text
-mithila-naturals/
-│
-├── apps/
-│   ├── storefront/
-│   ├── admin/
-│   └── api/
-│
-├── packages/
-│   └── client-config/
-│
-├── prisma/
-│
-├── tests/
-│
-├── docs/
-│
-├── .env.example
-│
-├── package.json
-│
-├── pnpm-workspace.yaml
-│
-└── README.md
+  modules: {
+    id: string;
+    version: string;
+    enabled: boolean;
+  }[];
+}
 ```
 
-## Client configuration
-
-```text
-packages/client-config/
-│
-├── store.config.ts
-│
-├── theme.config.ts
-│
-├── modules.config.ts
-│
-└── business.config.ts
-```
-
-These files contain client-specific non-secret configuration.
+Non-secret configuration can be maintained in version-controlled files.
 
 Sensitive credentials must remain in environment variables or secret managers.
 
+## Client isolation
+
+Each client receives:
+
+- Separate database
+- Separate API deployment
+- Separate frontend deployment
+- Separate environment variables
+- Separate payment credentials
+- Separate shipping credentials
+- Separate domains
+- Separate media storage configuration
+- Separate release lifecycle
+
 ---
 
-# 16. Performance Architecture
+# 19. Hosting and Deployment Architecture
 
-The primary requirement is a fast application with predictable response times.
+The monorepo is the development environment. The applications within it are independently buildable and deployable.
 
-**We are not choosing serverless as the default backend architecture.**
+## Recommended initial hosting
 
-## Recommended hosting model
-
-| Application | Hosting |
+| Component | Hosting |
 |---|---|
-| Storefront | Vercel or suitable Next.js hosting |
-| Admin | Vercel or suitable Next.js hosting |
-| NestJS API | Persistent Node.js server |
-| Database | Managed PostgreSQL |
-| Media | Object storage |
-| Static assets | CDN |
-| Background jobs | Persistent worker when required |
+| Storefront | Vercel |
+| Admin Panel | Vercel |
+| NestJS API | Railway or persistent VPS |
+| PostgreSQL | Managed PostgreSQL |
+| Images and media | Cloudinary or S3-compatible storage |
+| CDN | Cloudflare or hosting provider |
+| Background worker | Persistent Node.js worker when required |
 
-## Why persistent backend?
+## How `apps/api` is hosted
 
-A persistent Node.js service avoids the typical per-function cold-start pattern of serverless APIs.
+`apps/api` is a normal NestJS application running as a persistent Node.js service.
 
-However, persistent hosting does not automatically guarantee performance. Database latency, queries, caching, rendering, and network overhead still matter.
+The deployment process:
 
-## Performance practices
+1. Connect the central repository to the hosting provider.
+2. Configure the API build pipeline for the monorepo.
+3. Build `apps/api` and all required workspace dependencies.
+4. Configure environment variables and secrets.
+5. Run Prisma migrations as part of the controlled deployment process.
+6. Start the compiled NestJS application.
+7. Configure the API domain.
+8. Connect Admin and Storefront to the API URL.
 
-- Static rendering for stable pages.
-- Revalidation for product and category pages where appropriate.
-- Server rendering only when required.
-- CDN for static assets.
-- Image optimization.
-- Database indexing.
-- Pagination.
-- Optimized SQL queries.
-- Reuse database connections correctly.
-- Avoid unnecessary API requests.
-- Avoid unnecessary client-side JavaScript.
-- Use caching with proper invalidation.
-- Monitor API latency and Core Web Vitals.
-
-## Redis
-
-Redis is not mandatory for the first version.
-
-Introduce it when there is a demonstrated need for:
-
-- Caching
-- Rate limiting
-- Distributed locks
-- Background job coordination
-- Frequently accessed data
-
-## Background jobs
-
-For tasks such as:
-
-- Sending emails
-- Generating reports
-- Processing webhooks
-- AI processing
-- Inventory synchronization
-
-Use a background worker when these tasks become too expensive or unreliable to perform in request-response flows.
-
----
-
-# 17. Deployment Architecture
-
-Each client receives a separate deployment.
-
-## Example
+Example:
 
 ```text
-Mithila Naturals
-
-shop.mithilanaturals.com
-        │
-        ▼
-Next.js Storefront
-        │
-        ▼
-NestJS API
-        │
-        ▼
-Mithila Naturals PostgreSQL
+api.mithilanaturals.in
 ```
 
-```text
-Client XYZ
+The backend remains running and handles API requests, webhooks, and other persistent workloads.
 
-shop.clientxyz.com
-        │
-        ▼
-Next.js Storefront
-        │
-        ▼
-NestJS API
-        │
-        ▼
-Client XYZ PostgreSQL
-```
+## Important deployment rule
 
-## Deployment isolation
+Do not treat `apps/api` as an isolated directory without its workspace dependencies.
 
-Each client has:
+The build must include the required packages such as:
 
-- Separate GitHub repository.
-- Separate hosting projects.
-- Separate API deployment.
-- Separate database.
-- Separate secrets.
-- Separate domains.
-- Separate storage configuration.
-- Separate release lifecycle.
+- Commerce Core
+- Module SDK
+- Shared Types
+- Installed Modules
+- Payment and Shipping Providers
 
----
+## Initial infrastructure strategy
 
-# 18. Manual Client Deployment Workflow
+A single adequately sized VPS may host multiple isolated client containers when appropriate.
 
-The deployment process will intentionally remain manual and reviewed during the initial phase.
+A separate physical server is not required for every client.
 
-## Step-by-step
+Each container or deployment must have its own:
 
-### Step 1: Create the repository
-
-Create a client repository using the approved Zwantum template.
-
-### Step 2: Select a theme
-
-Install the client's approved theme package.
-
-### Step 3: Install modules
-
-Install required packages:
-
-```bash
-pnpm add @zwantum/payment-razorpay
-
-pnpm add @zwantum/shipping-shiprocket
-
-pnpm add @zwantum/chatbot
-```
-
-Install only the modules required by that client.
-
-### Step 4: Configure branding
-
-Set:
-
-- Store name
-- Logo
-- Colors
-- Fonts
-- Navbar
-- Theme settings
-
-### Step 5: Configure modules
-
-Set provider credentials and required settings securely.
-
-### Step 6: Database setup
-
-Create the client's PostgreSQL database.
-
-Configure Prisma and run migrations.
-
-### Step 7: Environment configuration
-
-Inject environment variables through the hosting provider's secret manager.
-
-### Step 8: Security review
-
-Check:
-
-- Authentication
-- Authorization
-- Webhook verification
-- Module permissions
-- Client data isolation
+- Application configuration
 - Environment variables
-- Dependency vulnerabilities
+- Database credentials
+- Network access rules
+- Domain configuration
+- Logging and monitoring
 
-### Step 9: Testing
-
-Run:
-
-- Unit tests
-- Integration tests
-- E2E tests
-- Build checks
-
-### Step 10: Deployment
-
-Deploy the frontend, admin and backend separately.
-
-### Step 11: Verification
-
-Verify:
-
-- Product listing
-- Cart
-- Checkout
-- Payments
-- Webhooks
-- Shipping
-- Email notifications
-- Admin permissions
-- Logs
-- Health checks
-
-### Step 12: Rollback readiness
-
-Document the previous stable version and rollback procedure.
+As traffic and operational requirements grow, individual clients can be migrated to dedicated infrastructure.
 
 ---
 
-# 19. Environment Variables
+# 20. Client Provisioning Workflow
+
+Initially, client provisioning will be manual and reviewed.
+
+## Step 1 — Create client configuration
+
+Create a configuration for the new business.
+
+## Step 2 — Select a theme
+
+Choose an approved theme and compatible version.
+
+## Step 3 — Select required modules
+
+Determine which optional modules the client requires.
+
+## Step 4 — Install packages
+
+Install the required modules and providers using approved versions.
+
+## Step 5 — Configure branding
+
+Set the store name, logo, colors, fonts, and supported customization options.
+
+## Step 6 — Configure integrations
+
+Configure payment, shipping, email, storage, and other required integrations.
+
+## Step 7 — Create PostgreSQL database
+
+Provision a separate database for the client.
+
+## Step 8 — Apply migrations
+
+Run Prisma migrations against the new database.
+
+## Step 9 — Configure environment variables
+
+Inject credentials through the deployment platform's secret management system.
+
+## Step 10 — Testing
+
+Run unit, integration, E2E, security, and build checks.
+
+## Step 11 — Deploy applications
+
+Deploy Storefront, Admin, and API independently.
+
+## Step 12 — Configure domains
+
+Connect the client's domains and SSL certificates.
+
+## Step 13 — Production verification
+
+Verify the entire customer journey, payment processing, shipping, Admin Panel, logs, and health checks.
+
+## Step 14 — Document the deployment
+
+Record deployed versions, configuration, database information, and rollback instructions.
+
+---
+
+# 21. Environment Variables
 
 Example `.env.example`:
 
@@ -1243,13 +1336,66 @@ OBJECT_STORAGE_BUCKET=
 - Never commit real `.env` files.
 - Never expose server secrets through `NEXT_PUBLIC_*`.
 - Validate environment variables at application startup.
-- Keep separate development, staging and production credentials.
+- Maintain separate development, staging, and production credentials.
 - Use secure secret management.
 - Rotate exposed credentials immediately.
 
 ---
 
-# 20. Security Architecture
+# 22. Performance Architecture
+
+The goal is a fast, reliable application with predictable response times.
+
+## Backend
+
+The core NestJS API will use persistent Node.js hosting rather than serverless functions as the default architecture.
+
+Reasons:
+
+- Persistent runtime
+- Predictable execution environment
+- Better suitability for long-running tasks
+- Webhook processing
+- Background jobs
+- WebSocket support when required
+
+Persistent hosting alone does not guarantee performance. Query efficiency, database latency, caching, and network overhead must still be optimized.
+
+## Performance practices
+
+- Static rendering for stable storefront pages.
+- Revalidation for product and category pages.
+- Server rendering only when required.
+- CDN for static assets.
+- Image optimization.
+- Database indexing.
+- Pagination.
+- Optimized SQL queries.
+- Proper database connection pooling.
+- Avoid unnecessary API requests.
+- Avoid unnecessary client-side JavaScript.
+- Caching with correct invalidation.
+- Monitor API latency and Core Web Vitals.
+
+## Redis
+
+Redis is not mandatory for the initial version.
+
+Introduce it when there is a demonstrated need for:
+
+- Caching
+- Rate limiting
+- Distributed locks
+- Background job coordination
+- Frequently accessed data
+
+## Background jobs
+
+Use a dedicated worker when tasks such as email sending, reports, webhook processing, AI tasks, or inventory synchronization become too expensive or unreliable within normal request-response flows.
+
+---
+
+# 23. Security Architecture
 
 Security must be integrated from the beginning.
 
@@ -1267,7 +1413,7 @@ Store Staff
 Customer
 ```
 
-Every protected API endpoint must verify permissions on the server.
+Every protected API endpoint must verify authorization on the server.
 
 ## Data security
 
@@ -1276,7 +1422,7 @@ Every protected API endpoint must verify permissions on the server.
 - Separate storage permissions.
 - Separate AI knowledge bases.
 - Validate client/store identity server-side.
-- Never trust client-supplied roles or prices.
+- Never trust client-supplied roles, prices, or permissions.
 - Test cross-client data isolation.
 
 ## Payments
@@ -1285,32 +1431,33 @@ Every protected API endpoint must verify permissions on the server.
 - Use idempotency.
 - Maintain payment and order state machines.
 - Never trust frontend payment status.
-- Do not store raw card data unnecessarily.
+- Avoid unnecessary storage of sensitive payment information.
 
 ## Application security
 
-- Input validation.
-- Rate limiting.
-- Secure session handling.
-- CSRF protection where applicable.
-- XSS protection.
-- SQL injection prevention.
-- Dependency auditing.
-- Secret scanning.
-- Audit logs for administrative actions.
+- Input validation
+- Rate limiting
+- Secure session handling
+- CSRF protection where applicable
+- XSS protection
+- SQL injection prevention
+- Dependency auditing
+- Secret scanning
+- Audit logs for administrative actions
 
-## Package security
+## Module security
 
-- Review all packages before publishing.
+- Review modules before publishing.
 - Pin versions.
 - Maintain changelogs.
 - Avoid arbitrary runtime code execution.
-- Do not allow clients to install untrusted plugins.
+- Do not allow untrusted third-party plugins.
 - Test breaking changes against a staging client.
+- Enforce permissions in the backend, not just the UI.
 
 ---
 
-# 21. Testing Strategy
+# 24. Testing Strategy
 
 ## Unit tests
 
@@ -1321,7 +1468,7 @@ Test:
 - Inventory logic
 - Validation
 - Business rules
-- Module configurations
+- Module configuration
 
 ## Integration tests
 
@@ -1333,10 +1480,11 @@ Test:
 - Shipping provider adapters
 - Module behavior
 - Webhook handling
+- Database migrations
 
 ## E2E tests
 
-Test the complete flow:
+Test the complete commerce journey:
 
 ```text
 Customer visits storefront
@@ -1362,7 +1510,7 @@ Customer tracks order
 
 Test:
 
-- Unauthorized admin access
+- Unauthorized Admin access
 - Customer access to other customers' orders
 - Cross-client data access
 - Webhook spoofing
@@ -1382,62 +1530,58 @@ Test:
 
 ---
 
-# 22. CI/CD Workflow
+# 25. CI/CD Workflow
 
-Every pull request should run:
+Every pull request should run automated checks.
 
 ```text
 Pull Request
-    │
-    ├── TypeScript Check
-    │
-    ├── Lint
-    │
-    ├── Unit Tests
-    │
-    ├── Integration Tests
-    │
-    ├── Dependency Scan
-    │
-    ├── Secret Scan
-    │
-    └── Build Validation
-            │
-            ▼
-       Code Review
-            │
-            ▼
-      Merge to Main
-            │
-            ▼
-     Version Package
-            │
-            ▼
-    Publish Package
-            │
-            ▼
-    Update Client Repo
-            │
-            ▼
-   Staging Deployment
-            │
-            ▼
-   Production Deployment
+     │
+     ├── TypeScript Check
+     ├── Lint
+     ├── Unit Tests
+     ├── Integration Tests
+     ├── Dependency Scan
+     ├── Secret Scan
+     └── Build Validation
+             │
+             ▼
+        Code Review
+             │
+             ▼
+         Merge to Main
+             │
+             ▼
+      Package Versioning
+             │
+             ▼
+      Package Publishing
+       (if applicable)
+             │
+             ▼
+      Client Upgrade PR
+             │
+             ▼
+       Staging Testing
+             │
+             ▼
+     Approved Production
+         Deployment
 ```
 
-Production deployment should require approval.
+Production deployments should require approval.
+
+Not every monorepo change requires publishing every package. Only changed packages with relevant version updates should be released.
 
 ---
 
-# 23. Two-Developer Workflow
-
-## Suggested ownership
+# 26. Two-Developer Workflow
 
 | Developer | Primary responsibility |
 |---|---|
-| Developer A | Storefront, themes, shared UI, admin panel |
+| Developer A | Storefront, themes, shared UI, Admin Panel |
 | Developer B | NestJS API, database, commerce core, integrations |
-| Both | Architecture, security, code reviews, testing, releases |
+| Both | Architecture, security, reviews, testing, releases |
 
 ## Working rules
 
@@ -1448,19 +1592,19 @@ Production deployment should require approval.
 - Document module interfaces.
 - Avoid duplicate implementations.
 - Maintain a staging client.
-- Keep security and tests part of the definition of done.
+- Security and testing are part of the definition of done.
 
 ---
 
-# 24. Implementation Roadmap
+# 27. Implementation Roadmap
 
 ## Phase 1 — Foundation
 
 - Setup pnpm and Turborepo.
 - Configure TypeScript.
 - Configure linting and formatting.
-- Setup Next.js storefront.
-- Setup Next.js admin.
+- Setup Next.js Storefront.
+- Setup Next.js Admin.
 - Setup NestJS API.
 - Configure PostgreSQL.
 - Setup Prisma.
@@ -1495,28 +1639,32 @@ Production deployment should require approval.
 - Add webhook verification.
 - Add integration tests.
 
-## Phase 5 — Client Template
+## Phase 5 — First Client Deployment
 
-- Create the client repository template.
-- Configure separate databases.
-- Configure hosting.
-- Document deployment.
-- Implement rollback procedures.
+- Configure one real client.
+- Provision a separate PostgreSQL database.
+- Deploy the API.
+- Deploy Storefront and Admin.
+- Configure domains and secrets.
+- Test the complete commerce flow.
+- Validate the deployment architecture.
 
-## Phase 6 — Module System
+## Phase 6 — First Optional Module
 
-- Create module registry.
-- Define module manifest.
-- Implement module authorization.
-- Implement module settings.
-- Publish reusable private packages.
-- Test installation in a client repo.
+- Develop Wishlist inside the monorepo.
+- Integrate through the workspace.
+- Define module manifest and lifecycle.
+- Develop Module SDK abstractions based on actual requirements.
+- Test module registration and permissions.
+- Package and publish the first stable module.
+- Install it in a test client deployment.
 
 ## Phase 7 — Expansion
 
 - Additional themes.
 - Additional payment providers.
 - Additional shipping providers.
+- Reviews and loyalty modules.
 - Chatbot.
 - Voice AI.
 - Analytics.
@@ -1525,97 +1673,104 @@ Production deployment should require approval.
 
 ---
 
-# 25. Risks and Mitigations
+# 28. Risks and Mitigations
 
 | Risk | Mitigation |
 |---|---|
-| Too many packages | Start with a small package set |
-| Code duplication across clients | Shared versioned packages |
-| Client-specific customizations become difficult to maintain | Use configuration and extension points |
+| Too many packages too early | Start with a small package set |
+| Code duplication | Shared workspace and versioned packages |
+| Client-specific customizations become difficult | Use configuration and extension points |
 | Breaking package updates | Semantic versioning and controlled upgrades |
 | Theme complexity | Prebuilt themes and controlled customization |
 | Unsafe plugin system | Trusted packages and security reviews |
 | Cross-client data leakage | Separate databases and isolation testing |
 | Payment inconsistencies | Webhook verification and idempotency |
-| Poor performance | Profiling, caching and database optimization |
+| Poor performance | Profiling, caching, database optimization |
 | Two-person team overload | Modular monolith and phased development |
-| Deployment failures | CI, staging and rollback |
+| Deployment failures | CI, staging, and rollback |
+| Dependency incompatibility | Explicit compatibility versions and upgrade tests |
 
 ---
 
-# 26. Final Architecture Decision
-
-The final proposed architecture is:
+# 29. Final Architecture Decision
 
 ```text
 ZWANTUM COMMERCE ENGINE
-
-Development:
-    Monorepo
-    pnpm
-    Turborepo
-
-Applications:
-    Next.js Storefront
-    Next.js Admin
-    NestJS API
-
-Backend:
-    Modular Monolith
-    Node.js Persistent Runtime
-
-Database:
-    PostgreSQL
-    Prisma
-
-Reusable Components:
-    Private NPM Packages
-    Theme Packages
-    Payment Modules
-    Shipping Modules
-    Chatbot Modules
-
-Client Delivery:
-    Separate GitHub Repository
-    Separate Frontend Deployment
-    Separate Backend Deployment
-    Separate PostgreSQL Database
-    Separate Environment Variables
-
-Customization:
-    Prebuilt Themes
-    Runtime Branding
-    Configurable Navbar
-    Authorized Module Toggles
-    Client-Specific Settings
-
-Operations:
-    Manual Reviewed Deployment
-    Security Checks
-    CI/CD
-    Versioned Packages
-    Controlled Upgrades
+│
+├── Development
+│   ├── Monorepo
+│   ├── pnpm
+│   └── Turborepo
+│
+├── Applications
+│   ├── Next.js Storefront
+│   ├── Next.js Admin
+│   └── NestJS API
+│
+├── Backend
+│   ├── Modular Monolith
+│   ├── Node.js Persistent Runtime
+│   └── Modular Business Logic
+│
+├── Database
+│   ├── PostgreSQL
+│   ├── Prisma
+│   └── Separate Database per Client
+│
+├── Reusable Packages
+│   ├── Commerce Core
+│   ├── Module SDK
+│   ├── Shared UI
+│   ├── Shared Types
+│   ├── Themes
+│   ├── Payment Providers
+│   ├── Shipping Providers
+│   └── Optional Modules
+│
+├── Module Development
+│   ├── Develop in Monorepo
+│   ├── Integrate through Workspace
+│   ├── Test and Build
+│   ├── Package Locally
+│   ├── Publish to Private Registry
+│   └── Install in Client Deployment
+│
+├── Client Delivery
+│   ├── Shared Centrally Maintained Code
+│   ├── Independent Application Deployments
+│   ├── Separate API Deployment
+│   ├── Separate PostgreSQL Database
+│   ├── Separate Environment Variables
+│   └── Client-Specific Configuration
+│
+└── Operations
+    ├── Manual Reviewed Provisioning
+    ├── CI/CD
+    ├── Versioned Packages
+    ├── Controlled Upgrades
+    ├── Security Checks
+    └── Monitoring and Backups
 ```
 
 ---
 
-# 27. Final Guiding Principle
+# 30. Final Guiding Principle
 
 Zwantum should not rebuild e-commerce applications from scratch for every client.
 
-Instead, it should maintain a reusable commerce ecosystem where every client receives a carefully configured combination of:
+Instead, it should maintain a reusable commerce ecosystem where each client receives a carefully configured combination of:
 
 - A prebuilt storefront theme.
 - Core commerce functionality.
-- Reusable payment and shipping modules.
+- Reusable payment and shipping integrations.
 - Optional AI and chatbot modules.
-- Client-specific branding and settings.
+- Client-specific branding and configuration.
 - Independent hosting and infrastructure.
 
-**The real value is not simply writing less code. It is building a system where new client projects require configuration, integration, testing, and deployment instead of rebuilding the entire application.**
+The real value is not simply writing less code. It is building a system where new client projects require **configuration, integration, testing, and deployment instead of rebuilding the entire application.**
 
 For a two-developer team, the most important decision is to keep the first version small, modular, secure, and well-tested.
 
-Build one complete client store first. Validate the architecture. Then gradually extract reusable packages, add themes, and expand the module ecosystem.
+**Build one complete client store first. Validate the architecture. Then gradually extract reusable packages, introduce the Module SDK, and expand the module ecosystem.**
 
-That is the most practical path to scaling Zwantum's engineering capacity without sacrificing performance or maintainability.
+This is the foundation of Zwantum Commerce Engine.
