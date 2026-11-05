@@ -1,4 +1,5 @@
 # Zwantum Commerce Engine
+
 # Development Roadmap
 
 **Project:** Zwantum Commerce Engine  
@@ -89,6 +90,7 @@
 ## 2.3 Core Commerce Modules
 
 ### Catalog
+
 - [ ] Product CRUD APIs
 - [ ] Category CRUD APIs
 - [ ] Product variants
@@ -97,6 +99,7 @@
 - [ ] Product status and publishing
 
 ### Inventory
+
 - [ ] Inventory management APIs
 - [ ] Stock tracking
 - [ ] Inventory movement history
@@ -104,11 +107,13 @@
 - [ ] Inventory reservation strategy
 
 ### Customers
+
 - [ ] Customer management APIs
 - [ ] Customer addresses
 - [ ] Customer order history
 
 ### Cart & Checkout
+
 - [ ] Cart APIs
 - [ ] Cart item management
 - [ ] Price calculation
@@ -118,6 +123,7 @@
 - [ ] Checkout transaction strategy
 
 ### Orders
+
 - [ ] Order creation
 - [ ] Order items and pricing snapshots
 - [ ] Order status management
@@ -659,15 +665,15 @@ zwantum-commerce/
 
 **Goal:** Establish the foundation and deliver the first functional vertical slice.
 
-| Day | Task | Expected Outcome |
-|---|---|---|
-| Day 1 | Finalize architecture, initialize repository, configure pnpm + Turborepo | Monorepo initialized |
-| Day 2 | Configure PostgreSQL, Prisma, database package, initial schema | Database connected |
-| Day 3 | Implement Store model, authentication, and session management | Authentication working |
-| Day 4 | Implement RBAC, permissions, and access control foundation | Secure authorization layer |
-| Day 5 | Implement Product and Category APIs | Core catalog APIs functional |
-| Day 6 | Build Admin layout, navigation, and API integration | Admin foundation |
-| Day 7 | Connect Product Management UI to API | First complete functional feature |
+| Day   | Task                                                                     | Expected Outcome                  |
+| ----- | ------------------------------------------------------------------------ | --------------------------------- |
+| Day 1 | Finalize architecture, initialize repository, configure pnpm + Turborepo | Monorepo initialized              |
+| Day 2 | Configure PostgreSQL, Prisma, database package, initial schema           | Database connected                |
+| Day 3 | Implement Store model, authentication, and session management            | Authentication working            |
+| Day 4 | Implement RBAC, permissions, and access control foundation               | Secure authorization layer        |
+| Day 5 | Implement Product and Category APIs                                      | Core catalog APIs functional      |
+| Day 6 | Build Admin layout, navigation, and API integration                      | Admin foundation                  |
+| Day 7 | Connect Product Management UI to API                                     | First complete functional feature |
 
 **Week 1 deliverable:** A working development environment with authentication, database foundation, product APIs, and an Admin Panel connected to the backend.
 

@@ -1,0 +1,361 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  STORE_ADMIN
+  STORE_MANAGER
+  STAFF
+  CUSTOMER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  RETURN_REQUESTED
+  RETURNED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum PaymentMethod {
+  UPI
+  NETBANKING
+  CARD
+  WALLET
+  COD
+}
+
+enum ShipmentStatus {
+  MANIFESTED
+  PICKED_UP
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  NDR
+  RTO_INITIATED
+  RTO_DELIVERED
+  CANCELLED
+}
+
+enum ReturnStatus {
+  REQUESTED
+  APPROVED
+  PICKUP_SCHEDULED
+  RECEIVED
+  INSPECTED
+  REFUND_PROCESSED
+  REJECTED
+}
+
+model Store {
+  id              String    @id @default(uuid())
+  name            String
+  slug            String    @unique
+  currency        String    @default("INR")
+  gstin           String?
+  stateCode       String?   // 2-digit Indian GST State code
+  originPincode   String?
+  settings        Json?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  users           User[]
+  customers       Customer[]
+  products        Product[]
+  categories      Category[]
+  orders          Order[]
+  carts           Cart[]
+  auditLogs       AuditLog[]
+
+  @@map("stores")
+}
+
+model User {
+  id              String    @id @default(uuid())
+  storeId         String?
+  email           String    @unique
+  passwordHash    String
+  name            String
+  role            UserRole  @default(STAFF)
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  store           Store?    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  auditLogs       AuditLog[]
+
+  @@map("users")
+}
+
+model Customer {
+  id              String    @id @default(uuid())
+  storeId         String
+  email           String?
+  phone           String
+  firstName       String
+  lastName        String?
+  isGuest         Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  store           Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  addresses       Address[]
+  orders          Order[]
+  carts           Cart[]
+  returnRequests  ReturnRequest[]
+
+  @@unique([storeId, phone])
+  @@map("customers")
+}
+
+model Address {
+  id                String    @id @default(uuid())
+  customerId        String
+  fullName          String
+  phone             String
+  addressLine1      String
+  addressLine2      String?
+  landmark          String?
+  city              String
+  district          String?
+  state             String
+  stateCode         String?   // 2-digit state code e.g. 07
+  pincode           String    // 6-digit Indian PIN code
+  countryCode       String    @default("IN")
+  isDefaultShipping Boolean   @default(false)
+  isDefaultBilling  Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  customer          Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@map("addresses")
+}
+
+model Category {
+  id          String     @id @default(uuid())
+  storeId     String
+  name        String
+  slug        String
+  description String?
+  parentId    String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  store       Store      @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  products    Product[]
+
+  @@unique([storeId, slug])
+  @@map("categories")
+}
+
+model Product {
+  id          String           @id @default(uuid())
+  storeId     String
+  categoryId  String?
+  title       String
+  slug        String
+  description String?
+  hsnCode     String?          // Indian HSN/SAC Code
+  isActive    Boolean          @default(true)
+  images      String[]         @default([])
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  store       Store            @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  category    Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  variants    ProductVariant[]
+
+  @@unique([storeId, slug])
+  @@map("products")
+}
+
+model ProductVariant {
+  id                  String      @id @default(uuid())
+  productId           String
+  sku                 String      @unique
+  title               String
+  pricePaise          Int         // Stored in integer paise (₹1 = 100 paise)
+  compareAtPricePaise Int?
+  inventoryQuantity   Int         @default(0)
+  weightGrams         Int?
+  options             Json        @default("{}")
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  product             Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cartItems           CartItem[]
+  orderItems          OrderItem[]
+
+  @@map("product_variants")
+}
+
+model Cart {
+  id          String      @id @default(uuid())
+  storeId     String
+  customerId  String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  store       Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  customer    Customer?   @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  items       CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id          String         @id @default(uuid())
+  cartId      String
+  variantId   String
+  quantity    Int
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  cart        Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variant     ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, variantId])
+  @@map("cart_items")
+}
+
+model Order {
+  id                  String         @id @default(uuid())
+  storeId             String
+  customerId          String?
+  orderNumber         String         @unique
+  status              OrderStatus    @default(PENDING)
+  paymentStatus       PaymentStatus  @default(PENDING)
+  paymentMethod       PaymentMethod
+  shippingAddress     Json
+  billingAddress      Json
+  subtotalPaise       Int
+  discountPaise       Int            @default(0)
+  shippingChargePaise Int            @default(0)
+  taxPaise            Int            @default(0)
+  totalPaise          Int
+  notes               String?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  store               Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  customer            Customer?      @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  items               OrderItem[]
+  payments            PaymentTransaction[]
+  shipments           Shipment[]
+  returnRequests      ReturnRequest[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id              String         @id @default(uuid())
+  orderId         String
+  variantId       String
+  title           String
+  sku             String
+  hsnCode         String?
+  quantity        Int
+  unitPricePaise  Int
+  taxPaise        Int            @default(0)
+  discountPaise   Int            @default(0)
+  totalPaise      Int
+  createdAt       DateTime       @default(now())
+
+  order           Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variant         ProductVariant @relation(fields: [variantId], references: [id])
+
+  @@map("order_items")
+}
+
+model PaymentTransaction {
+  id              String         @id @default(uuid())
+  orderId         String
+  provider        String         // RAZORPAY | CASHFREE | MANUAL | COD
+  gatewayOrderId  String?
+  paymentId       String?
+  amountPaise     Int
+  currency        String         @default("INR")
+  status          PaymentStatus  @default(PENDING)
+  metadata        Json?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  order           Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("payment_transactions")
+}
+
+model Shipment {
+  id              String         @id @default(uuid())
+  orderId         String
+  provider        String         // SHIPROCKET | MANUAL
+  trackingNumber  String?
+  awbCode         String?
+  courierName     String?
+  status          ShipmentStatus @default(MANIFESTED)
+  shippingPincode String
+  history         Json?          @default("[]")
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  order           Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("shipments")
+}
+
+model ReturnRequest {
+  id                String       @id @default(uuid())
+  orderId           String
+  customerId        String
+  reason            String
+  status            ReturnStatus @default(REQUESTED)
+  refundAmountPaise Int
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  order             Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  customer          Customer     @relation(fields: [customerId], references: [id])
+
+  @@map("return_requests")
+}
+
+model AuditLog {
+  id          String    @id @default(uuid())
+  storeId     String?
+  userId      String?
+  action      String
+  entity      String
+  entityId    String
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+
+  store       Store?    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}
+

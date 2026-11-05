@@ -1,0 +1,37 @@
+{
+  "name": "@zwantum/api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "nest build || tsc -p tsconfig.build.json",
+    "dev": "nest start --watch || tsx watch src/main.ts",
+    "start": "node dist/main.js",
+    "start:dev": "nest start --watch || tsx watch src/main.ts",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.10",
+    "@nestjs/config": "^4.0.0",
+    "@nestjs/core": "^11.0.10",
+    "@nestjs/platform-express": "^11.0.10",
+    "@nestjs/terminus": "^11.0.0",
+    "@zwantum/auth": "workspace:*",
+    "@zwantum/commerce-core": "workspace:*",
+    "@zwantum/database": "workspace:*",
+    "@zwantum/module-sdk": "workspace:*",
+    "@zwantum/shared-types": "workspace:*",
+    "@zwantum/validation": "workspace:*",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.5",
+    "@nestjs/schematics": "^11.0.2",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.5",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

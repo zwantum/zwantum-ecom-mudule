@@ -1,4 +1,5 @@
 # Zwantum Commerce Engine
+
 ## Technical Architecture & Implementation Blueprint
 
 **Status:** Architecture & Development Blueprint  
@@ -42,24 +43,24 @@ The platform will be developed from scratch using modern web technologies. Exist
 
 # 2. Architecture Decisions
 
-| Area | Decision |
-|---|---|
-| Repository | Monorepo |
-| Backend architecture | Modular Monolith |
-| Backend framework | NestJS |
-| Backend runtime | Persistent Node.js |
-| Frontend | Next.js |
-| Database | PostgreSQL |
-| ORM | Prisma |
-| Package manager | pnpm |
-| Monorepo tooling | Turborepo |
-| Shared development | Workspace packages |
-| Module distribution | Private npm packages when appropriate |
-| Client architecture | Independent deployments |
-| Client data | Separate PostgreSQL database per client |
-| Infrastructure | Persistent hosting + managed services |
-| Initial deployment | Manual and reviewed |
-| Future provisioning | Gradually automated |
+| Area                 | Decision                                |
+| -------------------- | --------------------------------------- |
+| Repository           | Monorepo                                |
+| Backend architecture | Modular Monolith                        |
+| Backend framework    | NestJS                                  |
+| Backend runtime      | Persistent Node.js                      |
+| Frontend             | Next.js                                 |
+| Database             | PostgreSQL                              |
+| ORM                  | Prisma                                  |
+| Package manager      | pnpm                                    |
+| Monorepo tooling     | Turborepo                               |
+| Shared development   | Workspace packages                      |
+| Module distribution  | Private npm packages when appropriate   |
+| Client architecture  | Independent deployments                 |
+| Client data          | Separate PostgreSQL database per client |
+| Infrastructure       | Persistent hosting + managed services   |
+| Initial deployment   | Manual and reviewed                     |
+| Future provisioning  | Gradually automated                     |
 
 ## Understanding the architecture
 
@@ -75,30 +76,30 @@ These three concepts work together; they are not competing architectures.
 
 # 3. Technology Stack
 
-| Layer | Technology | Purpose |
-|---|---|---|
-| Language | TypeScript | Shared language across applications |
-| Storefront | Next.js | Customer-facing website |
-| Admin Panel | Next.js | Store management dashboard |
-| Backend | NestJS | Commerce API |
-| Runtime | Node.js | Persistent backend runtime |
-| UI | React | Component-based interface |
-| Styling | Tailwind CSS | Styling and design system |
-| UI Components | shadcn/ui | Accessible reusable components |
-| Database | PostgreSQL | Relational data storage |
-| ORM | Prisma | Data access and migrations |
-| Validation | Zod | Runtime validation and shared schemas |
-| Package Manager | pnpm | Dependency and workspace management |
-| Monorepo | Turborepo | Build orchestration and caching |
-| State Management | Zustand | Client-side state |
-| Data Fetching | TanStack Query | API data management |
-| Unit Testing | Vitest | Unit and integration tests |
-| E2E Testing | Playwright | Browser-based testing |
-| Package Registry | GitHub Packages | Private package distribution |
-| API Hosting | Railway / VPS / Cloud VM | Persistent NestJS deployment |
-| Frontend Hosting | Vercel or equivalent | Next.js deployment |
-| Media Storage | S3-compatible storage / Cloudinary | Product media |
-| CDN | Cloudflare or hosting provider | Asset delivery |
+| Layer            | Technology                         | Purpose                               |
+| ---------------- | ---------------------------------- | ------------------------------------- |
+| Language         | TypeScript                         | Shared language across applications   |
+| Storefront       | Next.js                            | Customer-facing website               |
+| Admin Panel      | Next.js                            | Store management dashboard            |
+| Backend          | NestJS                             | Commerce API                          |
+| Runtime          | Node.js                            | Persistent backend runtime            |
+| UI               | React                              | Component-based interface             |
+| Styling          | Tailwind CSS                       | Styling and design system             |
+| UI Components    | shadcn/ui                          | Accessible reusable components        |
+| Database         | PostgreSQL                         | Relational data storage               |
+| ORM              | Prisma                             | Data access and migrations            |
+| Validation       | Zod                                | Runtime validation and shared schemas |
+| Package Manager  | pnpm                               | Dependency and workspace management   |
+| Monorepo         | Turborepo                          | Build orchestration and caching       |
+| State Management | Zustand                            | Client-side state                     |
+| Data Fetching    | TanStack Query                     | API data management                   |
+| Unit Testing     | Vitest                             | Unit and integration tests            |
+| E2E Testing      | Playwright                         | Browser-based testing                 |
+| Package Registry | GitHub Packages                    | Private package distribution          |
+| API Hosting      | Railway / VPS / Cloud VM           | Persistent NestJS deployment          |
+| Frontend Hosting | Vercel or equivalent               | Next.js deployment                    |
+| Media Storage    | S3-compatible storage / Cloudinary | Product media                         |
+| CDN              | Cloudflare or hosting provider     | Asset delivery                        |
 
 ---
 
@@ -236,12 +237,12 @@ zwantum-commerce/
 
 ```yaml
 packages:
-  - "apps/*"
-  - "packages/*"
-  - "packages/themes/*"
-  - "packages/payments/*"
-  - "packages/shipping/*"
-  - "packages/modules/*"
+  - 'apps/*'
+  - 'packages/*'
+  - 'packages/themes/*'
+  - 'packages/payments/*'
+  - 'packages/shipping/*'
+  - 'packages/modules/*'
 ```
 
 ## Package development principle
@@ -277,15 +278,15 @@ The storefront provides the complete customer-facing shopping experience.
 
 ### Rendering strategy
 
-| Page | Approach |
-|---|---|
-| Homepage | Static or revalidated rendering |
-| Product listing | Static/revalidated where appropriate |
-| Product details | Static generation or revalidation |
-| Cart | Client-side interactions |
-| Checkout | Server-validated operations |
-| Customer account | Authenticated rendering |
-| Order tracking | Authenticated API requests |
+| Page             | Approach                             |
+| ---------------- | ------------------------------------ |
+| Homepage         | Static or revalidated rendering      |
+| Product listing  | Static/revalidated where appropriate |
+| Product details  | Static generation or revalidation    |
+| Cart             | Client-side interactions             |
+| Checkout         | Server-validated operations          |
+| Customer account | Authenticated rendering              |
+| Order tracking   | Authenticated API requests           |
 
 ## 6.2 Admin Panel — Next.js
 
@@ -579,16 +580,16 @@ Modules are reusable capabilities that extend the core commerce engine.
 
 ## Module categories
 
-| Category | Examples |
-|---|---|
-| Marketing | Wishlist, loyalty, referrals |
-| Customer experience | Reviews, ratings |
-| AI | Chatbot, voice AI |
-| Analytics | Store analytics |
-| Recommendations | Product recommendations |
-| Support | FAQ, support tickets |
-| Payments | Razorpay, Cashfree |
-| Shipping | Shiprocket, manual shipping |
+| Category            | Examples                     |
+| ------------------- | ---------------------------- |
+| Marketing           | Wishlist, loyalty, referrals |
+| Customer experience | Reviews, ratings             |
+| AI                  | Chatbot, voice AI            |
+| Analytics           | Store analytics              |
+| Recommendations     | Product recommendations      |
+| Support             | FAQ, support tickets         |
+| Payments            | Razorpay, Cashfree           |
+| Shipping            | Shiprocket, manual shipping  |
 
 ## Three types of modules
 
@@ -901,14 +902,14 @@ GitHub Packages will be the initial private registry.
 
 A module's state should be tracked explicitly.
 
-| State | Meaning |
-|---|---|
-| Authorized | Zwantum permits the client to use the module |
-| Available | Compatible package version is available |
-| Installed | Package is integrated into the application |
+| State      | Meaning                                        |
+| ---------- | ---------------------------------------------- |
+| Authorized | Zwantum permits the client to use the module   |
+| Available  | Compatible package version is available        |
+| Installed  | Package is integrated into the application     |
 | Configured | Required settings and credentials are provided |
-| Enabled | Client admin has activated the module |
-| Healthy | Module is operating correctly |
+| Enabled    | Client admin has activated the module          |
+| Healthy    | Module is operating correctly                  |
 
 These states are not interchangeable.
 
@@ -977,17 +978,11 @@ packages/
 
 ```ts
 export interface PaymentProvider {
-  createPayment(
-    input: CreatePaymentInput
-  ): Promise<PaymentResult>;
+  createPayment(input: CreatePaymentInput): Promise<PaymentResult>;
 
-  verifyWebhook(
-    input: WebhookInput
-  ): Promise<WebhookVerificationResult>;
+  verifyWebhook(input: WebhookInput): Promise<WebhookVerificationResult>;
 
-  refund?(
-    input: RefundInput
-  ): Promise<RefundResult>;
+  refund?(input: RefundInput): Promise<RefundResult>;
 }
 ```
 
@@ -1032,17 +1027,11 @@ packages/
 
 ```ts
 export interface ShippingProvider {
-  createShipment(
-    input: CreateShipmentInput
-  ): Promise<ShipmentResult>;
+  createShipment(input: CreateShipmentInput): Promise<ShipmentResult>;
 
-  getTracking(
-    input: TrackingInput
-  ): Promise<TrackingResult>;
+  getTracking(input: TrackingInput): Promise<TrackingResult>;
 
-  cancelShipment?(
-    input: CancelShipmentInput
-  ): Promise<CancelShipmentResult>;
+  cancelShipment?(input: CancelShipmentInput): Promise<CancelShipmentResult>;
 }
 ```
 
@@ -1140,8 +1129,8 @@ export interface ClientConfig {
 
   theme: {
     themeId: string;
-  config: StoreThemeConfig;
-  version: string;
+    config: StoreThemeConfig;
+    version: string;
   };
 
   modules: {
@@ -1178,14 +1167,14 @@ The monorepo is the development environment. The applications within it are inde
 
 ## Recommended initial hosting
 
-| Component | Hosting |
-|---|---|
-| Storefront | Vercel |
-| Admin Panel | Vercel |
-| NestJS API | Railway or persistent VPS |
-| PostgreSQL | Managed PostgreSQL |
-| Images and media | Cloudinary or S3-compatible storage |
-| CDN | Cloudflare or hosting provider |
+| Component         | Hosting                                 |
+| ----------------- | --------------------------------------- |
+| Storefront        | Vercel                                  |
+| Admin Panel       | Vercel                                  |
+| NestJS API        | Railway or persistent VPS               |
+| PostgreSQL        | Managed PostgreSQL                      |
+| Images and media  | Cloudinary or S3-compatible storage     |
+| CDN               | Cloudflare or hosting provider          |
 | Background worker | Persistent Node.js worker when required |
 
 ## How `apps/api` is hosted
@@ -1577,11 +1566,11 @@ Not every monorepo change requires publishing every package. Only changed packag
 
 # 26. Two-Developer Workflow
 
-| Developer | Primary responsibility |
-|---|---|
-| Developer A | Storefront, themes, shared UI, Admin Panel |
-| Developer B | NestJS API, database, commerce core, integrations |
-| Both | Architecture, security, reviews, testing, releases |
+| Developer   | Primary responsibility                             |
+| ----------- | -------------------------------------------------- |
+| Developer A | Storefront, themes, shared UI, Admin Panel         |
+| Developer B | NestJS API, database, commerce core, integrations  |
+| Both        | Architecture, security, reviews, testing, releases |
 
 ## Working rules
 
@@ -1675,20 +1664,20 @@ Not every monorepo change requires publishing every package. Only changed packag
 
 # 28. Risks and Mitigations
 
-| Risk | Mitigation |
-|---|---|
-| Too many packages too early | Start with a small package set |
-| Code duplication | Shared workspace and versioned packages |
-| Client-specific customizations become difficult | Use configuration and extension points |
-| Breaking package updates | Semantic versioning and controlled upgrades |
-| Theme complexity | Prebuilt themes and controlled customization |
-| Unsafe plugin system | Trusted packages and security reviews |
-| Cross-client data leakage | Separate databases and isolation testing |
-| Payment inconsistencies | Webhook verification and idempotency |
-| Poor performance | Profiling, caching, database optimization |
-| Two-person team overload | Modular monolith and phased development |
-| Deployment failures | CI, staging, and rollback |
-| Dependency incompatibility | Explicit compatibility versions and upgrade tests |
+| Risk                                            | Mitigation                                        |
+| ----------------------------------------------- | ------------------------------------------------- |
+| Too many packages too early                     | Start with a small package set                    |
+| Code duplication                                | Shared workspace and versioned packages           |
+| Client-specific customizations become difficult | Use configuration and extension points            |
+| Breaking package updates                        | Semantic versioning and controlled upgrades       |
+| Theme complexity                                | Prebuilt themes and controlled customization      |
+| Unsafe plugin system                            | Trusted packages and security reviews             |
+| Cross-client data leakage                       | Separate databases and isolation testing          |
+| Payment inconsistencies                         | Webhook verification and idempotency              |
+| Poor performance                                | Profiling, caching, database optimization         |
+| Two-person team overload                        | Modular monolith and phased development           |
+| Deployment failures                             | CI, staging, and rollback                         |
+| Dependency incompatibility                      | Explicit compatibility versions and upgrade tests |
 
 ---
 
