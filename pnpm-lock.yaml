@@ -41,6 +41,12 @@ importers:
       '@zwantum/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
+      '@zwantum/theme-contract':
+        specifier: workspace:*
+        version: link:../../packages/theme-contract
+      '@zwantum/theme-default':
+        specifier: workspace:*
+        version: link:../../packages/themes/default
       '@zwantum/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -111,6 +117,12 @@ importers:
       '@zwantum/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
+      '@zwantum/theme-contract':
+        specifier: workspace:*
+        version: link:../../packages/theme-contract
+      '@zwantum/theme-default':
+        specifier: workspace:*
+        version: link:../../packages/themes/default
       '@zwantum/validation':
         specifier: workspace:*
         version: link:../../packages/validation

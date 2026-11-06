@@ -14,6 +14,8 @@
     "@zwantum/commerce-core": "workspace:*",
     "@zwantum/module-sdk": "workspace:*",
     "@zwantum/shared-types": "workspace:*",
+    "@zwantum/theme-contract": "workspace:*",
+    "@zwantum/theme-default": "workspace:*",
     "@zwantum/ui": "workspace:*",
     "@zwantum/validation": "workspace:*",
     "next": "^15.2.0",

@@ -16,6 +16,8 @@ export interface ThemeColors {
   accent: string;
   accentForeground: string;
   border: string;
+  card?: string;
+  cardForeground?: string;
 }
 
 export interface ThemeTypography {

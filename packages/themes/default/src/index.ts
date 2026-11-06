@@ -2,37 +2,41 @@ import type { ThemeConfig } from '@zwantum/theme-contract';
 
 /**
  * @zwantum/theme-default
- * Production-ready Bookstore Theme for Zwantum Commerce Engine.
- * Tailored for literary stores, publishing houses, and independent book retailers in India.
+ * Production-ready Zwantum Commerce Brand Theme.
+ * Palette: #FFCC00 (Zwantum Yellow), #000000 (Black), #FFFFFF (White).
+ * Background is white (#FFFFFF) by default and must NOT be #000000 by default.
+ * All colors are dynamically configurable via the Merchant Admin dashboard.
  */
 
 export const defaultTheme: ThemeConfig = {
-  id: 'theme-books-default',
-  name: 'Granth & Quill - Literary Bookstore',
-  version: '1.0.0',
+  id: 'theme-zwantum-default',
+  name: 'Zwantum Signature - Flagship Commerce Theme',
+  version: '2.0.0',
   category: 'books_publishing',
   branding: {
-    storeName: 'Granth & Quill Books',
-    tagline: 'Curated Indian & World Literature, Delivered to Your Doorstep',
+    storeName: 'Zwantum Books & Commerce',
+    tagline: 'Curated Indian & World Literature, Delivered Across India',
     announcementText:
-      '📚 Free Express Pan-India Delivery on orders above ₹499 • COD Available Nationwide',
+      '⚡ Pan-India Fast Dispatch • Printed Books 0% GST (HSN 4901) • Cash on Delivery & UPI Enabled',
   },
   colors: {
-    primary: '#451a03', // Deep mahogany book leather
-    primaryForeground: '#ffffff',
-    secondary: '#fef3c7', // Warm literary parchment
-    secondaryForeground: '#78350f',
-    background: '#fffdfa', // Warm ivory reading paper
-    foreground: '#1c1917', // Rich warm printer ink
-    muted: '#f5f5f4', // Stone reader neutral
-    mutedForeground: '#78716c',
-    accent: '#b45309', // Terracotta bookmark ribbon
-    accentForeground: '#ffffff',
-    border: '#e7e5e4',
+    primary: '#FFCC00', // Signature Zwantum Yellow / Gold
+    primaryForeground: '#000000', // Crisp black text on yellow (AAA contrast ratio ~ 14.1:1)
+    secondary: '#F4F4F5', // Light clean neutral surface
+    secondaryForeground: '#18181B',
+    background: '#FFFFFF', // Clean white background (NEVER #000 by default)
+    foreground: '#000000', // Crisp black typography
+    muted: '#F4F4F5', // Soft gray
+    mutedForeground: '#71717A',
+    accent: '#FFCC00', // Zwantum Yellow highlight accent
+    accentForeground: '#000000',
+    border: '#E4E4E7', // Crisp subtle border
+    card: '#FFFFFF', // Clean card surface
+    cardForeground: '#000000',
   },
   typography: {
     fontFamilySans: 'Inter, system-ui, -apple-system, sans-serif',
-    fontFamilyHeading: 'Georgia, Cambria, "Times New Roman", Times, serif',
+    fontFamilyHeading: 'system-ui, -apple-system, sans-serif',
     baseFontSize: '16px',
   },
   borderRadius: 'md',

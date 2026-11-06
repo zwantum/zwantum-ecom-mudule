@@ -21,6 +21,8 @@
     "@zwantum/database": "workspace:*",
     "@zwantum/module-sdk": "workspace:*",
     "@zwantum/shared-types": "workspace:*",
+    "@zwantum/theme-contract": "workspace:*",
+    "@zwantum/theme-default": "workspace:*",
     "@zwantum/validation": "workspace:*",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
