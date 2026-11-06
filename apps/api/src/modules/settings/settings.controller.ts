@@ -38,3 +38,4 @@ export class SettingsController {
     return this.updateTheme(rawBody);
   }
 }
+

@@ -7,6 +7,7 @@ import { StorefrontHeader } from '../components/storefront-header';
 import { StorefrontFooter } from '../components/storefront-footer';
 import { PinChecker } from '../components/pin-checker';
 import { CartDrawer, type CartItem } from '../components/cart-drawer';
+import { Star, Sparkles } from '../components/icons';
 
 interface BookItem {
   id: string;
@@ -308,7 +309,10 @@ export default function StorefrontHomePage() {
 
                 <div className="pt-4 border-t border-zinc-300/60 flex items-center justify-between text-xs">
                   <span className="font-bold text-zinc-800">{FEATURED_BOOK.genre}</span>
-                  <span className="font-mono text-zinc-500 font-bold">★ 4.8 / 5</span>
+                  <div className="flex items-center gap-1 font-mono text-zinc-600 font-bold">
+                    <Star className="w-3.5 h-3.5 fill-[#FFCC00] text-[#FFCC00]" />
+                    <span>4.8 / 5</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -317,13 +321,14 @@ export default function StorefrontHomePage() {
             <div className="lg:col-span-7 space-y-5">
               <div className="flex flex-wrap items-center gap-2">
                 <span
-                  className="text-xs font-black px-2.5 py-1 rounded-md tracking-wider uppercase"
+                  className="text-xs font-black px-2.5 py-1 rounded-md tracking-wider uppercase inline-flex items-center gap-1.5"
                   style={{
                     backgroundColor: theme.colors.primary,
                     color: theme.colors.primaryForeground,
                   }}
                 >
-                  ⚡ Book of the Month
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Book of the Month</span>
                 </span>
                 <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
                   0% GST Exempt (Printed Books)

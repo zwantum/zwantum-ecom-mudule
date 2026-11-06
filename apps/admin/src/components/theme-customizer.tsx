@@ -3,16 +3,32 @@
 import React, { useState, useEffect } from 'react';
 import type { ThemeConfig } from '@zwantum/theme-contract';
 import defaultTheme from '@zwantum/theme-default';
+import {
+  Palette,
+  Tag,
+  Eye,
+  Zap,
+  Sun,
+  Leaf,
+  Shield,
+  AlertTriangle,
+  Check,
+  ExternalLink,
+} from './icons';
 
 const THEME_STORAGE_KEY = 'zwantum_active_theme_config';
 const BROADCAST_CHANNEL_NAME = 'zwantum_theme_channel';
 
-const PRESETS: Array<{
+interface PresetItem {
+  id: 'signature' | 'amber' | 'emerald' | 'blue';
   name: string;
   badge: string;
   colors: ThemeConfig['colors'];
-}> = [
+}
+
+const PRESETS: PresetItem[] = [
   {
+    id: 'signature',
     name: 'Zwantum Signature (Default)',
     badge: 'Official Palette',
     colors: {
@@ -32,6 +48,7 @@ const PRESETS: Array<{
     },
   },
   {
+    id: 'amber',
     name: 'Zwantum Amber Glow',
     badge: 'Warm Accent',
     colors: {
@@ -51,6 +68,7 @@ const PRESETS: Array<{
     },
   },
   {
+    id: 'emerald',
     name: 'Zwantum Emerald Mint',
     badge: 'Fresh Growth',
     colors: {
@@ -70,6 +88,7 @@ const PRESETS: Array<{
     },
   },
   {
+    id: 'blue',
     name: 'Zwantum Royal Blue',
     badge: 'Executive',
     colors: {
@@ -126,7 +145,7 @@ export function ThemeCustomizer() {
       const normalized = value.toLowerCase().trim();
       if (normalized === '#000' || normalized === '#000000' || normalized === 'black') {
         setErrorMessage(
-          '⚠️ Architectural Rule: Pure black (#000000) cannot be used as the default background. Use #FFFFFF or a light neutral canvas.',
+          'Architectural Rule Violation: Pure black (#000000) cannot be used as the default background. Use #FFFFFF or a light neutral canvas.',
         );
         return;
       }
@@ -151,7 +170,7 @@ export function ThemeCustomizer() {
     }));
   };
 
-  const handleApplyPreset = (preset: (typeof PRESETS)[0]) => {
+  const handleApplyPreset = (preset: PresetItem) => {
     setErrorMessage('');
     setTheme((prev) => ({
       ...prev,
@@ -185,7 +204,7 @@ export function ThemeCustomizer() {
         throw new Error(`API responded with ${res.status}`);
       }
 
-      // 2. Save to local storage for cross-origin sync
+      // 2. Save to local storage for cross-tab sync
       localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(theme));
 
       // 3. Broadcast to open Storefront tabs
@@ -253,16 +272,12 @@ export function ThemeCustomizer() {
               </>
             ) : saveStatus === 'saved' ? (
               <>
-                <svg className="h-4 w-4 text-[#FFCC00]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+                <Check className="h-4 w-4 text-[#FFCC00]" />
                 Applied Live!
               </>
             ) : (
               <>
-                <svg className="h-4 w-4 text-[#FFCC00]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-                </svg>
+                <Palette className="h-4 w-4 text-[#FFCC00]" />
                 Save &amp; Apply to Storefront
               </>
             )}
@@ -273,9 +288,7 @@ export function ThemeCustomizer() {
       {/* Notifications / Alerts */}
       {errorMessage && (
         <div className="bg-amber-50 border-b border-amber-200 p-4 text-xs font-medium text-amber-900 flex items-center gap-2">
-          <svg className="w-4 h-4 text-amber-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
+          <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
           <span>{errorMessage}</span>
         </div>
       )}
@@ -283,9 +296,7 @@ export function ThemeCustomizer() {
       {saveStatus === 'saved' && (
         <div className="bg-emerald-50 border-b border-emerald-200 p-4 text-xs font-medium text-emerald-800 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+            <Check className="w-4 h-4 text-emerald-600" />
             <span>
               Theme configuration successfully saved to API and broadcasted to Storefront!
             </span>
@@ -294,9 +305,10 @@ export function ThemeCustomizer() {
             href="http://localhost:3002"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-emerald-900 font-bold underline hover:text-emerald-700 inline-flex items-center gap-1"
+            className="text-emerald-900 font-bold underline hover:text-emerald-700 inline-flex items-center gap-1.5"
           >
-            View Live Storefront &rarr;
+            <span>View Live Storefront</span>
+            <ExternalLink className="w-3.5 h-3.5" />
           </a>
         </div>
       )}
@@ -305,33 +317,36 @@ export function ThemeCustomizer() {
       <div className="border-b border-slate-200 px-6 pt-3 flex gap-6 text-xs font-semibold">
         <button
           onClick={() => setActiveTab('colors')}
-          className={`pb-3 border-b-2 transition ${
+          className={`pb-3 border-b-2 transition inline-flex items-center gap-2 ${
             activeTab === 'colors'
               ? 'border-black text-black'
               : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
         >
-          🎨 Color Palette &amp; Tokens
+          <Palette className="w-4 h-4" />
+          <span>Color Palette &amp; Tokens</span>
         </button>
         <button
           onClick={() => setActiveTab('branding')}
-          className={`pb-3 border-b-2 transition ${
+          className={`pb-3 border-b-2 transition inline-flex items-center gap-2 ${
             activeTab === 'branding'
               ? 'border-black text-black'
               : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
         >
-          🏷️ Store Branding &amp; Copy
+          <Tag className="w-4 h-4" />
+          <span>Store Branding &amp; Copy</span>
         </button>
         <button
           onClick={() => setActiveTab('preview')}
-          className={`pb-3 border-b-2 transition ${
+          className={`pb-3 border-b-2 transition inline-flex items-center gap-2 ${
             activeTab === 'preview'
               ? 'border-black text-black'
               : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
         >
-          👁️ Live Preview Pane
+          <Eye className="w-4 h-4" />
+          <span>Live Preview Pane</span>
         </button>
       </div>
 
@@ -352,7 +367,13 @@ export function ThemeCustomizer() {
                     className="p-3 rounded-lg border border-slate-200 hover:border-black cursor-pointer transition bg-white hover:shadow-sm"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold text-slate-800 truncate">{preset.name}</span>
+                      <div className="flex items-center gap-1.5 truncate">
+                        {preset.id === 'signature' && <Zap className="w-3.5 h-3.5 text-zinc-800 flex-shrink-0" />}
+                        {preset.id === 'amber' && <Sun className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />}
+                        {preset.id === 'emerald' && <Leaf className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />}
+                        {preset.id === 'blue' && <Shield className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />}
+                        <span className="text-xs font-bold text-slate-800 truncate">{preset.name}</span>
+                      </div>
                       <span className="text-[10px] font-semibold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
                         {preset.badge}
                       </span>

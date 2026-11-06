@@ -31,8 +31,8 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   await app.listen(port);
-  logger.log(`🚀 Zwantum Commerce API is running on: http://localhost:${port}/${apiPrefix}`);
-  logger.log(`🩺 Health check endpoint: http://localhost:${port}/${apiPrefix}/health`);
+  logger.log(`[ZwantumBootstrap] Zwantum Commerce API is running on: http://localhost:${port}/${apiPrefix}`);
+  logger.log(`[ZwantumBootstrap] Health check endpoint: http://localhost:${port}/${apiPrefix}/health`);
 }
 
 bootstrap();

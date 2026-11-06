@@ -39,3 +39,4 @@ export const UpdateThemeDtoSchema = z.object({
 });
 
 export type UpdateThemeDto = z.infer<typeof UpdateThemeDtoSchema>;
+

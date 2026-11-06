@@ -17,7 +17,7 @@ export const defaultTheme: ThemeConfig = {
     storeName: 'Zwantum Books & Commerce',
     tagline: 'Curated Indian & World Literature, Delivered Across India',
     announcementText:
-      '⚡ Pan-India Fast Dispatch • Printed Books 0% GST (HSN 4901) • Cash on Delivery & UPI Enabled',
+      'Pan-India Fast Dispatch • Printed Books 0% GST (HSN 4901) • Cash on Delivery & UPI Enabled',
   },
   colors: {
     primary: '#FFCC00', // Signature Zwantum Yellow / Gold

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useTheme } from './theme-provider';
+import { Truck, Search, ShoppingBag } from './icons';
 
 interface StorefrontHeaderProps {
   bagCount: number;
@@ -29,9 +30,13 @@ export function StorefrontHeader({
           borderColor: theme.colors.border,
         }}
       >
-        <span>
-          {theme.branding.announcementText ||
-            '⚡ Pan-India Fast Dispatch • Printed Books 0% GST (HSN 4901) • Cash on Delivery & UPI Enabled'}
+        <span className="inline-flex items-center justify-center gap-1.5">
+          <Truck className="w-3.5 h-3.5" />
+          <span>
+            {(theme.branding.announcementText ||
+              'Pan-India Fast Dispatch • Printed Books 0% GST (HSN 4901) • Cash on Delivery & UPI Enabled'
+            ).replace(/^[^\w\s]+\s*/, '')}
+          </span>
         </span>
       </div>
 
@@ -82,19 +87,7 @@ export function StorefrontHeader({
                     color: theme.colors.foreground,
                   }}
                 />
-                <svg
-                  className="absolute left-3.5 top-3 h-4 w-4 text-zinc-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
+                <Search className="absolute left-3.5 top-3 h-4 w-4 text-zinc-400" />
               </div>
             </div>
 
@@ -119,19 +112,7 @@ export function StorefrontHeader({
                   borderColor: theme.colors.border,
                 }}
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                  />
-                </svg>
+                <ShoppingBag className="w-4 h-4" />
                 <span>Bag</span>
                 <span
                   className="text-[11px] font-black px-1.5 py-0.2 rounded-full"
@@ -184,3 +165,4 @@ export function StorefrontHeader({
     </>
   );
 }
+

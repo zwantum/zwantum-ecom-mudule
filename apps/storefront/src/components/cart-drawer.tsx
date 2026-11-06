@@ -3,6 +3,7 @@
 import React from 'react';
 import { useTheme } from './theme-provider';
 import { formatINR } from '@zwantum/commerce-core';
+import { Lock } from './icons';
 
 export interface CartItem {
   id: string;
@@ -215,8 +216,9 @@ export function CartDrawer({
                 </svg>
               </button>
 
-              <p className="text-[10px] text-center text-zinc-500 font-medium">
-                🔒 256-Bit SSL Encrypted &bull; UPI &bull; NetBanking &bull; Cards &bull; Cash on Delivery
+              <p className="text-[10px] text-center text-zinc-500 font-medium flex items-center justify-center gap-1.5">
+                <Lock className="w-3 h-3 text-zinc-500" />
+                <span>256-Bit SSL Encrypted &bull; UPI &bull; NetBanking &bull; Cards &bull; Cash on Delivery</span>
               </p>
             </div>
           )}
@@ -225,3 +227,4 @@ export function CartDrawer({
     </div>
   );
 }
+
